@@ -3,12 +3,13 @@ import { Button, Table } from 'react-bootstrap';
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
-import Modal from './ProductModal';
+import Modal from './Modal';
 import {
     productReducer,
     DELETE_PRODUCT, GET_ALL_PRODUCT, LOADING, ERROR
 }from '../context/productReducer';
 import { productService } from '../services/service';
+import { ProductItem } from './Product';
 
 const initialState = {
     products: [],
@@ -51,7 +52,6 @@ function ProductList() {
     }
 
     function loadProducts() {
-
         dispatch({ type: LOADING, payload: [] });
 
         productService.getAll()
@@ -139,23 +139,7 @@ function ProductList() {
                 </thead>
                 <tbody>
                     { state.products.length > 0 && state.products.map((product, index) => (
-                        <tr key={index}>
-                            <td>{product.productId}</td>
-                            <td>{product.productName}</td>
-                            <td>{product.code}</td>
-                            <td>{product.price}</td>
-                            <td>{product.quantity}</td>
-                            <td>
-                                <Button className="btn btn-sm btn-primary mb-2"
-                                    onClick={() => updateProduct(product.productId)}>Update
-                                </Button>
-
-                                &nbsp;&nbsp;
-                                <Button className="btn btn-sm btn-danger mb-2"
-                                    onClick={() => deleteProduct(product.productId)}>Delete
-                                </Button>
-                            </td>
-                        </tr>
+                        <ProductItem key={index} product={product} deleteProduct={deleteProduct} updateProduct={updateProduct}/>
                     ))}
 
                      {/* Loading  */}
@@ -193,22 +177,26 @@ function ProductList() {
                     <div className="form-row">
                         <div className="form-group">
                             <label>Product Name</label>
-                            <input id="name" name="productName" type="text" ref={register} className={`form-control ${errors.productName ? 'is-invalid' : ''}`} />
+                            <input id="name" name="productName" type="text" ref={register}
+                                className={`form-control ${errors.productName ? 'is-invalid' : ''}`} />
                             <div className="invalid-feedback">{errors.productName?.message}</div>
                         </div>
                         <div className="form-group">
                             <label >Code</label>
-                            <input id="code" name="code" type="text" ref={register} className={`form-control ${errors.code ? 'is-invalid' : ''}`} />
+                            <input id="code" name="code" type="text" ref={register}
+                                className={`form-control ${errors.code ? 'is-invalid' : ''}`} />
                             <div className="invalid-feedback">{errors.code?.message}</div>
                         </div>
                         <div className="form-group">
                             <label >Price</label>
-                            <input id="price "name="price" type="text" ref={register} className={`form-control ${errors.price ? 'is-invalid' : ''}`} />
+                            <input id="price "name="price" type="text" ref={register}
+                                className={`form-control ${errors.price ? 'is-invalid' : ''}`} />
                             <div className="invalid-feedback">{errors.price?.message}</div>
                         </div>
                         <div className="form-group">
                             <label>Quantity</label>
-                            <input id="quantity" name="quantity" type="text" ref={register} className={`form-control ${errors.quantity ? 'is-invalid' : ''}`} />
+                            <input id="quantity" name="quantity" type="text" ref={register}
+                                className={`form-control ${errors.quantity ? 'is-invalid' : ''}`} />
                             <div className="invalid-feedback">{errors.quantity?.message}</div>
                         </div>
                     </div>
