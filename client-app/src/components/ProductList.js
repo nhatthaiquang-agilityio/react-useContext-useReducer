@@ -1,15 +1,13 @@
 import React, { useState, useReducer, useEffect } from 'react';
 import { Button, Table } from 'react-bootstrap';
-import { useForm } from "react-hook-form";
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as Yup from 'yup';
-import Modal from './Modal';
+import ProductModal from './ProductModal';
 import {
     productReducer,
     DELETE_PRODUCT, GET_ALL_PRODUCT, LOADING, ERROR
 }from '../context/productReducer';
 import { productService } from '../services/service';
 import { ProductItem } from './Product';
+import ProductContext from '../context/productContext';
 
 const initialState = {
     products: [],
@@ -39,18 +37,6 @@ function ProductList() {
             });
     }
 
-    function getProduct(productId) {
-        setProductId(productId);
-
-        return productService.get(productId)
-                .then((data) => {
-                    handleGetResponse(data);
-                })
-                .catch((error) => {
-                    dispatch({ type: ERROR });
-                });
-    }
-
     function loadProducts() {
         dispatch({ type: LOADING, payload: [] });
 
@@ -72,7 +58,7 @@ function ProductList() {
 
         return promiseService
             .then((e)=> {
-                closeForm();
+                closeModal();
                 loadProducts();
             })
             .catch((error) => {
@@ -80,41 +66,16 @@ function ProductList() {
             });
     }
 
-    // form validation rules
-    const validationSchema = Yup.object().shape({
-        productName: Yup.string().required('Product Name is required'),
-        code: Yup.string().required('Code is required'),
-        price: Yup.number().required('Price is required'),
-        quantity: Yup.number().required('Quantity is required'),
-    });
-
-    // functions to build form returned by useForm() hook
-    const { register, handleSubmit, reset, setValue, errors, formState } = useForm({
-        resolver: yupResolver(validationSchema)
-    });
-
-    function handleGetResponse(data) {
-        const fields = ['productName', 'code', 'price', 'quantity'];
-        fields.forEach(field => setValue(field, data[field]));
-    }
-
     function addProduct() {
-        reset();
         setIsShow(true);
     }
 
     function updateProduct(productId) {
-        reset();
         setIsShow(true);
-        getProduct(productId);
+        setProductId(productId);
     }
 
-    function closeModal(e) {
-        e.preventDefault();
-        setIsShow(false);
-    }
-
-    function closeForm() {
+    function closeModal() {
         setIsShow(false);
     }
 
@@ -139,7 +100,14 @@ function ProductList() {
                 </thead>
                 <tbody>
                     { state.products.length > 0 && state.products.map((product, index) => (
-                        <ProductItem key={index} product={product} deleteProduct={deleteProduct} updateProduct={updateProduct}/>
+                        <ProductContext.Provider
+                            value={{
+                                product: product,
+                                delete: deleteProduct,
+                                update: updateProduct,
+                            }} key={index}>
+                            <ProductItem/>
+                        </ProductContext.Provider>
                     ))}
 
                      {/* Loading  */}
@@ -171,47 +139,18 @@ function ProductList() {
                 </tbody>
             </Table>
 
-            <Modal show={isShow} handleClose={e => this.modalClose(e)}>
-                <form onSubmit={handleSubmit(onSubmit)} onReset={reset} className="product-form">
-                    <h4>{(productId === 0) ? 'Add Product' : 'Edit Product'}</h4>
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label>Product Name</label>
-                            <input id="name" name="productName" type="text" ref={register}
-                                className={`form-control ${errors.productName ? 'is-invalid' : ''}`} />
-                            <div className="invalid-feedback">{errors.productName?.message}</div>
-                        </div>
-                        <div className="form-group">
-                            <label >Code</label>
-                            <input id="code" name="code" type="text" ref={register}
-                                className={`form-control ${errors.code ? 'is-invalid' : ''}`} />
-                            <div className="invalid-feedback">{errors.code?.message}</div>
-                        </div>
-                        <div className="form-group">
-                            <label >Price</label>
-                            <input id="price "name="price" type="text" ref={register}
-                                className={`form-control ${errors.price ? 'is-invalid' : ''}`} />
-                            <div className="invalid-feedback">{errors.price?.message}</div>
-                        </div>
-                        <div className="form-group">
-                            <label>Quantity</label>
-                            <input id="quantity" name="quantity" type="text" ref={register}
-                                className={`form-control ${errors.quantity ? 'is-invalid' : ''}`} />
-                            <div className="invalid-feedback">{errors.quantity?.message}</div>
-                        </div>
-                    </div>
-                    <div className="form-group btn-margin" >
-                        <button type="submit" disabled={formState.isSubmitting} className="btn btn-primary">
-                            {formState.isSubmitting && <span className="spinner-border spinner-border-sm mr-1"></span>}
-                            Save
-                        </button>
-                        &nbsp;
-                        <button className="btn btn-link" onClick={e => closeModal(e)}>
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            </Modal>
+            <ProductContext.Provider
+                value={{
+                    product: null,
+                    delete: null,
+                    update: null,
+                    isShow: isShow,
+                    productId: productId,
+                    onSubmit: onSubmit,
+                    closeModal: closeModal
+                }}>
+                <ProductModal/>
+            </ProductContext.Provider>
         </div>
     );
 }

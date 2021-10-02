@@ -1,23 +1,26 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button } from 'react-bootstrap';
+import ProductContext from '../context/productContext';
 
-function ProductItem(props) {
+function ProductItem() {
+    const context = useContext(ProductContext);
+
     return (
         <>
             <tr>
-                <td>{props.product.productId}</td>
-                <td>{props.product.productName}</td>
-                <td>{props.product.code}</td>
-                <td>{props.product.price}</td>
-                <td>{props.product.quantity}</td>
+                <td>{context.product.productId}</td>
+                <td>{context.product.productName}</td>
+                <td>{context.product.code}</td>
+                <td>{context.product.price}</td>
+                <td>{context.product.quantity}</td>
                 <td>
                     <Button className="btn btn-sm btn-primary mb-2"
-                        onClick={() => props.updateProduct(props.product.productId)}>Update
+                        onClick={() => context.update(context.product.productId)}>Update
                     </Button>
 
                     &nbsp;&nbsp;
                     <Button className="btn btn-sm btn-danger mb-2"
-                        onClick={() => props.deleteProduct(props.product.productId)}>Delete
+                        onClick={() => context.delete(context.product.productId)}>Delete
                     </Button>
                 </td>
             </tr>
