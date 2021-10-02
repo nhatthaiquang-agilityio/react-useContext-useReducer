@@ -23,21 +23,17 @@ function ProductModal() {
         resolver: yupResolver(validationSchema)
     });
 
-    function handleGetResponse(data) {
-        const fields = ['productName', 'code', 'price', 'quantity'];
-        fields.forEach(field => setValue(field, data[field]));
-    }
-
     useEffect(() => {
-        console.log("reset");
         reset();
+
         if (context.productId !== 0) {
             productService.get(context.productId)
                 .then((data) => {
-                    handleGetResponse(data);
+                    const fields = ['productName', 'code', 'price', 'quantity'];
+                    fields.forEach(field => setValue(field, data[field]));
                 })
                 .catch((error) => {
-                    //dispatch({ type: ERROR });
+                    console.log("Error", error);
                 });
         }
     }, [context.productId]);
