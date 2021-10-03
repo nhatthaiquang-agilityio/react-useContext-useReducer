@@ -68,19 +68,19 @@ function ProductList() {
             });
     }
 
-    const addProduct = useCallback(() =>  {
+    function addProduct() {
         setProductId(0);
         setIsShow(true);
-    }, []);
+    }
 
-    const updateProduct = useCallback((productId) =>  {
+    function updateProduct(productId) {
         setProductId(productId);
         setIsShow(true);
-    }, []);
+    }
 
-    const closeModal = useCallback(() =>  {
+    function closeModal() {
         setIsShow(false);
-    }, []);
+    }
 
     return (
         <div className="container">
