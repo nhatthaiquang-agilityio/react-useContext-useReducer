@@ -12,7 +12,7 @@ const productReducer = (state, action) => {
             return {
                 ...state,
                 products: action.payload,
-                error:false,
+                error: false,
                 loading: false
             }
         case LOADING:

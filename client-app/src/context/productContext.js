@@ -4,10 +4,7 @@ const ProductContext = createContext({
     product: {},
     delete: () => {},
     update: () => {},
-    onSubmit: () => {},
-    closeModal: () => {},
-    isShow: false,
-    productId: 0
+    onSubmit: () => {}
 });
 
 export default ProductContext;

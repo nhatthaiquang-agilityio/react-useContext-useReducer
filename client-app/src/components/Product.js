@@ -4,6 +4,7 @@ import ProductContext from '../context/productContext';
 
 function ProductItem() {
     const context = useContext(ProductContext);
+    console.log("Product item", context.product.productId);
 
     return (
         <>

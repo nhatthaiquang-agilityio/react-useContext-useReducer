@@ -2,12 +2,12 @@ import React, { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
-import ProductContext from "../context/productContext";
+import ProductModalContext from "../context/productModalContext";
 import { productService } from '../services/service';
 
 
 function ProductModal() {
-    const context = useContext(ProductContext);
+    const context = useContext(ProductModalContext);
     const showHideClassName = context.isShow ? "modal d-block" : "modal d-none";
 
     // form validation rules
@@ -34,6 +34,7 @@ function ProductModal() {
                 })
                 .catch((error) => {
                     console.log("Error", error);
+                    // can use dispatch error
                 });
         }
     }, [context.productId]);

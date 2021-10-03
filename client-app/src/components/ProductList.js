@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useEffect } from 'react';
+import React, { useState, useReducer, useEffect, useCallback } from 'react';
 import { Button, Table } from 'react-bootstrap';
 import ProductModal from './ProductModal';
 import {
@@ -8,6 +8,8 @@ import {
 import { productService } from '../services/service';
 import { ProductItem } from './Product';
 import ProductContext from '../context/productContext';
+import ProductModalContext from '../context/productModalContext';
+
 
 const initialState = {
     products: [],
@@ -54,7 +56,7 @@ function ProductList() {
         data["productId"] = productId;
 
         let jsonData = JSON.stringify(data);
-        let promiseService = (productId === 0) ? productService.create(jsonData) : productService.update(productId, jsonData)
+        let promiseService = (productId === 0) ? productService.create(jsonData) : productService.update(productId, jsonData);
 
         return promiseService
             .then((e)=> {
@@ -66,18 +68,19 @@ function ProductList() {
             });
     }
 
-    function addProduct() {
+    const addProduct = useCallback(() =>  {
+        setProductId(0);
         setIsShow(true);
-    }
+    }, []);
 
-    function updateProduct(productId) {
-        setIsShow(true);
+    const updateProduct = useCallback((productId) =>  {
         setProductId(productId);
-    }
+        setIsShow(true);
+    }, []);
 
-    function closeModal() {
+    const closeModal = useCallback(() =>  {
         setIsShow(false);
-    }
+    }, []);
 
     return (
         <div className="container">
@@ -110,7 +113,7 @@ function ProductList() {
                         </ProductContext.Provider>
                     ))}
 
-                     {/* Loading  */}
+                    {/* Loading  */}
                     { state.loading &&
                     <tr>
                         <td colSpan="6" className="text-center">
@@ -139,18 +142,15 @@ function ProductList() {
                 </tbody>
             </Table>
 
-            <ProductContext.Provider
+            <ProductModalContext.Provider
                 value={{
-                    product: null,
-                    delete: null,
-                    update: null,
                     isShow: isShow,
                     productId: productId,
                     onSubmit: onSubmit,
                     closeModal: closeModal
                 }}>
                 <ProductModal/>
-            </ProductContext.Provider>
+            </ProductModalContext.Provider>
         </div>
     );
 }
