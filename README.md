@@ -1,4 +1,4 @@
-# react-useContext-useReducer
+# React: using useContext and useReducer
 React Example: useContext and useReducer and webAPI
 
 ### Development
