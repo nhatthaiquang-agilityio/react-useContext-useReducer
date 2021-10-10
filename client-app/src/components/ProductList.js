@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useEffect, useCallback } from 'react';
+import React, { useState, useReducer, useEffect } from 'react';
 import { Button, Table } from 'react-bootstrap';
 import ProductModal from './ProductModal';
 import {
